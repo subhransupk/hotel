@@ -16,6 +16,24 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Check if Clerk environment variables are available
+  const isClerkConfigured = 
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && 
+    process.env.CLERK_SECRET_KEY;
+
+  // If Clerk is not configured, render without ClerkProvider
+  if (!isClerkConfigured) {
+    console.warn("Clerk is not initialized due to missing environment variables");
+    return (
+      <html lang="en">
+        <body className={inter.className}>
+          {children}
+          <Toaster richColors position="top-right" />
+        </body>
+      </html>
+    );
+  }
+
   return (
     <ClerkProvider
       appearance={{

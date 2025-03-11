@@ -15,6 +15,12 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 export async function POST(req: Request) {
   console.log('Webhook received from Clerk');
   
+  // Check if Clerk is configured
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
+    console.warn("Clerk is not initialized due to missing environment variables");
+    return new NextResponse('Clerk is not initialized due to missing environment variables', { status: 200 });
+  }
+  
   // Get the headers
   const headerPayload = headers();
   const svix_id = headerPayload.get('svix-id');
@@ -224,5 +230,11 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
+  // Check if Clerk is configured
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
+    console.warn("Clerk is not initialized due to missing environment variables");
+    return new NextResponse('Clerk is not initialized due to missing environment variables', { status: 200 });
+  }
+  
   return new NextResponse('Webhook endpoint is working', { status: 200 });
 }
