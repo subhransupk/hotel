@@ -1,0 +1,252 @@
+[
+  {
+    "schemaname": "public",
+    "tablename": "hotel_profiles",
+    "policyname": "Enable all operations for service role on hotels",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "((auth.jwt() ->> 'role'::text) = 'service_role'::text)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_profiles",
+    "policyname": "Enable read for hotel owners",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(owner_id = auth.uid())",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_profiles",
+    "policyname": "Enable read for hotel staff",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM hotel_staff\n  WHERE ((hotel_staff.hotel_id = hotel_staff.id) AND (hotel_staff.user_id = auth.uid()) AND (hotel_staff.is_active = true))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_profiles",
+    "policyname": "Enable update for hotel owners",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(owner_id = auth.uid())",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_profiles",
+    "policyname": "Service role can manage all hotels",
+    "permissive": "PERMISSIVE",
+    "roles": "{service_role}",
+    "cmd": "ALL",
+    "qual": "true",
+    "with_check": "true"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_profiles",
+    "policyname": "Users can update their own hotel",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = owner_id)",
+    "with_check": "(auth.uid() = owner_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_profiles",
+    "policyname": "Users can view their own hotel",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = owner_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_staff",
+    "policyname": "Enable all for hotel owners on staff",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "(EXISTS ( SELECT 1\n   FROM hotel_profiles\n  WHERE ((hotel_profiles.id = hotel_staff.hotel_id) AND (hotel_profiles.owner_id = auth.uid()))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_staff",
+    "policyname": "Enable all operations for service role on staff",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "((auth.jwt() ->> 'role'::text) = 'service_role'::text)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_staff",
+    "policyname": "Service role can manage all staff",
+    "permissive": "PERMISSIVE",
+    "roles": "{service_role}",
+    "cmd": "ALL",
+    "qual": "true",
+    "with_check": "true"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_staff",
+    "policyname": "Users can update their own staff",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "UPDATE",
+    "qual": "(EXISTS ( SELECT 1\n   FROM hotel_profiles\n  WHERE ((hotel_profiles.id = hotel_staff.hotel_id) AND (hotel_profiles.owner_id = auth.uid()))))",
+    "with_check": "(EXISTS ( SELECT 1\n   FROM hotel_profiles\n  WHERE ((hotel_profiles.id = hotel_staff.hotel_id) AND (hotel_profiles.owner_id = auth.uid()))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "hotel_staff",
+    "policyname": "Users can view their own staff",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(EXISTS ( SELECT 1\n   FROM hotel_profiles\n  WHERE ((hotel_profiles.id = hotel_staff.hotel_id) AND (hotel_profiles.owner_id = auth.uid()))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "partner_profiles",
+    "policyname": "Admins can manage partner profiles",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "(EXISTS ( SELECT 1\n   FROM user_profiles\n  WHERE ((user_profiles.id = auth.uid()) AND (user_profiles.user_type = 'admin'::user_type))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "partner_profiles",
+    "policyname": "Enable all operations for service role on partners",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "((auth.jwt() ->> 'role'::text) = 'service_role'::text)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "partner_profiles",
+    "policyname": "Enable read and update for partners themselves",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "(user_id = auth.uid())",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "partner_profiles",
+    "policyname": "Service role can manage all partners",
+    "permissive": "PERMISSIVE",
+    "roles": "{service_role}",
+    "cmd": "ALL",
+    "qual": "true",
+    "with_check": "true"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "partner_profiles",
+    "policyname": "Users can update their own partner",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = user_id)",
+    "with_check": "(auth.uid() = user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "partner_profiles",
+    "policyname": "Users can view their own partner",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = user_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "user_profiles",
+    "policyname": "Enable all operations for service role",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "((auth.jwt() ->> 'role'::text) = 'service_role'::text)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "user_profiles",
+    "policyname": "Enable read for users themselves",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "user_profiles",
+    "policyname": "Enable update for users themselves",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "user_profiles",
+    "policyname": "Service role can manage all profiles",
+    "permissive": "PERMISSIVE",
+    "roles": "{service_role}",
+    "cmd": "ALL",
+    "qual": "true",
+    "with_check": "true"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "user_profiles",
+    "policyname": "Users can update their own profile",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "UPDATE",
+    "qual": "(auth.uid() = id)",
+    "with_check": "(auth.uid() = id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "user_profiles",
+    "policyname": "Users can view their own profile",
+    "permissive": "PERMISSIVE",
+    "roles": "{authenticated}",
+    "cmd": "SELECT",
+    "qual": "(auth.uid() = id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "website_content",
+    "policyname": "Admins can manage website content",
+    "permissive": "PERMISSIVE",
+    "roles": "{public}",
+    "cmd": "ALL",
+    "qual": "(EXISTS ( SELECT 1\n   FROM user_profiles\n  WHERE ((user_profiles.id = auth.uid()) AND (user_profiles.user_type = 'admin'::user_type))))",
+    "with_check": null
+  }
+]
