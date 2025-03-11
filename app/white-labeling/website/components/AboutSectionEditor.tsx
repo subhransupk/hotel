@@ -159,7 +159,7 @@ export default function AboutSectionEditor() {
                       <NumberInput
                         placeholder="Years of Experience"
                         value={member.experience}
-                        onChange={(value) => updateTeamMember(index, { ...member, experience: value })}
+                        onValueChange={(value) => updateTeamMember(index, { ...member, experience: value })}
                         min={0}
                       />
                     </div>
