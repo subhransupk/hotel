@@ -1,7 +1,7 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
-import { clerkClient } from '@clerk/nextjs';
+import { clerkClient } from '@clerk/clerk-sdk-node';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 

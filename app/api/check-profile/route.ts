@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { clerkClient } from '@clerk/nextjs/server';
+import { clerkClient } from '@clerk/clerk-sdk-node';
 import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -31,8 +31,7 @@ export async function POST(req: Request) {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Get user data from Clerk
-    const clerk = await clerkClient();
-    const user = await clerk.users.getUser(userId);
+    const user = await clerkClient.users.getUser(userId);
     
     // Check if user profile exists
     console.log('Checking if user profile exists');

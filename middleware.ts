@@ -1,6 +1,7 @@
-import { clerkMiddleware, clerkClient } from '@clerk/nextjs/server';
+import { clerkMiddleware, getAuth } from '@clerk/nextjs/server';
 import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
+import { clerkClient } from '@clerk/clerk-sdk-node';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -42,7 +43,8 @@ export default clerkMiddleware(async (auth, req) => {
   }
   
   // Get auth state
-  const { userId } = await auth();
+  const authState = getAuth(req);
+  const userId = authState.userId;
   
   // If the user is not signed in and the route is not public, redirect to sign-in
   if (!userId && !isPublic) {
@@ -55,8 +57,7 @@ export default clerkMiddleware(async (auth, req) => {
     
     try {
       // Get the user from Clerk to check their role
-      const clerk = await clerkClient();
-      const user = await clerk.users.getUser(userId);
+      const user = await clerkClient.users.getUser(userId);
       const userRole = user.publicMetadata.role as string || "hotel_owner";
       
       console.log("User role:", userRole);
