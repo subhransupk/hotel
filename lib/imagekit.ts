@@ -4,6 +4,18 @@ import ImageKit from "imagekit";
 export const imagekitClient = {
     publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || '',
     urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || '',
+    authenticator: async () => {
+        try {
+            const response = await fetch('/api/imagekit/auth');
+            if (!response.ok) {
+                throw new Error('Failed to get authentication');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('ImageKit authentication error:', error);
+            return { signature: '', token: '', expire: 0 };
+        }
+    }
 };
 
 // Server-side configuration

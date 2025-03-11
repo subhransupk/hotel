@@ -67,7 +67,7 @@ export default function ImageKitUploader({
             <IKContext 
                 publicKey={imagekitClient.publicKey} 
                 urlEndpoint={imagekitClient.urlEndpoint} 
-                authenticationEndpoint={imagekitClient.authenticationEndpoint}
+                authenticator={imagekitClient.authenticator}
             >
                 <IKUpload
                     fileName="image.jpg"
