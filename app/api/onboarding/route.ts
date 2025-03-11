@@ -39,10 +39,7 @@ export async function POST(req: Request) {
     
     // Validate Supabase environment variables
     if (!supabaseUrl || !supabaseServiceKey) {
-      console.error('Missing Supabase environment variables:', { 
-        supabaseUrl: !!supabaseUrl, 
-        supabaseServiceKey: !!supabaseServiceKey 
-      });
+      console.error('Missing Supabase environment variables');
       return NextResponse.json({ message: 'Server configuration error' }, { status: 500 });
     }
     
@@ -93,8 +90,8 @@ export async function POST(req: Request) {
     let profileUpdated = false;
     
     try {
-      // First check if user profile exists
-      console.log('Checking if user profile exists');
+      // Check if user profile already exists
+      console.log('Checking if user profile already exists');
       const { data: existingProfile, error: profileCheckError } = await supabase
         .from('user_profiles')
         .select('id, onboarding_status')
@@ -103,4 +100,81 @@ export async function POST(req: Request) {
         
       if (profileCheckError && profileCheckError.code !== 'PGRST116') { // PGRST116 is "not found"
         console.error('Error checking user profile:', profileCheckError);
-        throw new Error(`
+        throw new Error(`Failed to check user profile: ${profileCheckError.message}`);
+      }
+      
+      console.log('Existing profile check result:', existingProfile);
+      
+      // Update user profile in Clerk
+      console.log('Updating user in Clerk');
+      await clerkClient.users.updateUser(userId, {
+        firstName,
+        lastName,
+      });
+      clerkUpdated = true;
+      console.log('Clerk user updated successfully');
+      
+      // Update user profile in Supabase
+      console.log('Updating user profile in Supabase');
+      const { data: updateProfileData, error: updateProfileError } = await supabase
+        .from('user_profiles')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber,
+          email,
+          onboarding_status: 'completed'
+        })
+        .eq('id', userId);
+      
+      if (updateProfileError) {
+        console.error('Error updating user profile in Supabase:', updateProfileError);
+        throw new Error(`Failed to update user profile in Supabase: ${updateProfileError.message}`);
+      }
+      
+      profileUpdated = true;
+      console.log('User profile updated successfully');
+      
+      // Create hotel profile in Supabase
+      console.log('Creating hotel profile in Supabase');
+      const { data: hotel, error: hotelError } = await supabase
+        .from('hotel_profiles')
+        .insert({
+          owner_id: userId,
+          hotel_name: hotelName,
+          email: email || '',
+          phone: phoneNumber,
+          address,
+          city,
+          state: state || null,
+          country,
+          postal_code: postalCode || null,
+        })
+        .select()
+        .single();
+      
+      if (hotelError) {
+        console.error('Error creating hotel profile:', hotelError);
+        throw new Error(`Failed to create hotel profile: ${hotelError.message}`);
+      }
+      
+      console.log('Hotel profile created successfully:', hotel);
+      console.log(`Onboarding completed successfully for user ${userId}`);
+      
+      return NextResponse.json({ 
+        message: 'Onboarding completed successfully',
+        hotelId: hotel.id
+      }, { status: 200 });
+    } catch (error) {
+      console.error('Error completing user onboarding:', error);
+      throw error;
+    } finally {
+      if (!clerkUpdated && !profileUpdated) {
+        console.error('Rollback: Neither Clerk nor Supabase user profile was updated');
+      }
+    }
+  } catch (error) {
+    console.error('Error completing user onboarding:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
+}
