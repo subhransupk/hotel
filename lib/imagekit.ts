@@ -1,9 +1,17 @@
 import ImageKit from "imagekit";
 
+// Get environment variables
+const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || '';
+const privateKey = process.env.IMAGEKIT_PRIVATE_KEY || '';
+const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || '';
+
+// Check if required environment variables are set
+const hasRequiredEnvVars = publicKey && privateKey && urlEndpoint;
+
 // Client-side configuration
 export const imagekitClient = {
-    publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || '',
-    urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || '',
+    publicKey,
+    urlEndpoint,
     authenticator: async () => {
         try {
             const response = await fetch('/api/imagekit/auth');
@@ -18,12 +26,14 @@ export const imagekitClient = {
     }
 };
 
-// Server-side configuration
-export const imagekitServer = new ImageKit({
-    publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || '',
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY || '',
-    urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ''
-});
+// Server-side configuration - only create if environment variables are available
+export const imagekitServer = hasRequiredEnvVars 
+    ? new ImageKit({
+        publicKey,
+        privateKey,
+        urlEndpoint
+      })
+    : null;
 
 // Helper function for image URLs
 export const getOptimizedImageUrl = (
@@ -32,8 +42,8 @@ export const getOptimizedImageUrl = (
 ) => {
     if (!imageUrl) return '';
     
-    // If it's already an ImageKit URL, return with transformations
-    if (imageUrl.includes(process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || '')) {
+    // If ImageKit is not configured or it's already an ImageKit URL, return as is
+    if (!imagekitServer || imageUrl.includes(urlEndpoint)) {
         return imageUrl;
     }
 
