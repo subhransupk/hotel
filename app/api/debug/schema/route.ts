@@ -6,20 +6,32 @@ import type { NextRequest } from 'next/server'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
+// Validate environment variables
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error('Missing Supabase environment variables')
-  throw new Error('Missing required environment variables for Supabase')
 }
 
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-})
+// Create Supabase client only if environment variables are available
+const supabaseAdmin = supabaseUrl && supabaseServiceKey 
+  ? createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
+  : null;
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if Supabase client is initialized
+    if (!supabaseAdmin) {
+      console.error('Supabase client is not initialized due to missing environment variables');
+      return NextResponse.json({ 
+        message: 'Server configuration error: Database connection not available',
+        details: 'Missing required environment variables for Supabase'
+      }, { status: 500 });
+    }
+    
     // Get table information for user_profiles
     const { data: userProfilesInfo, error: userProfilesError } = await supabaseAdmin
       .from('user_profiles')
