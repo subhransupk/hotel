@@ -4,9 +4,18 @@ import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Validate environment variables
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Missing required environment variables for Supabase');
+}
+
+// Create Supabase client only if environment variables are available
+const supabase = supabaseUrl && supabaseServiceKey 
+  ? createClient(supabaseUrl, supabaseServiceKey)
+  : null;
 
 // Form schema
 const partnerSchema = z.object({
@@ -30,6 +39,15 @@ export async function POST(req: Request) {
     if (!user) {
       console.log('Unauthorized: No user found');
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    
+    // Check if Supabase client is initialized
+    if (!supabase) {
+      console.error('Supabase client is not initialized due to missing environment variables');
+      return NextResponse.json({ 
+        message: 'Server configuration error: Database connection not available',
+        details: 'Missing required environment variables for Supabase'
+      }, { status: 500 });
     }
     
     // Parse and validate the request body
