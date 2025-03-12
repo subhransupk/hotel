@@ -79,16 +79,10 @@ export function PublicHeader() {
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
           <Link
-            href="/sign-in"
-            className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white ring-1 ring-gray-900/10 dark:ring-gray-100/20 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
-          >
-            Log in
-          </Link>
-          <Link
-            href="/sign-up"
+            href="/dashboard"
             className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
           >
-            Get started
+            Go to Dashboard
           </Link>
         </div>
       </nav>
@@ -141,18 +135,11 @@ export function PublicHeader() {
               </div>
               <div className="py-6 space-y-4">
                 <Link
-                  href="/sign-in"
-                  className="w-full inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-base font-semibold text-gray-900 dark:text-white ring-1 ring-gray-900/10 dark:ring-gray-100/20 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/sign-up"
+                  href="/dashboard"
                   className="w-full inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-base font-semibold text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Get started
+                  Go to Dashboard
                 </Link>
               </div>
             </div>

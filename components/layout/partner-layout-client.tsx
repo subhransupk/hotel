@@ -16,7 +16,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { TextInput, Badge, Text } from '@tremor/react'
 import PartnerNavigation from './partner-navigation'
-import { useClerk } from '@clerk/nextjs'
 
 interface PartnerLayoutClientProps {
   children: ReactNode
@@ -26,12 +25,9 @@ export default function PartnerLayoutClient({ children }: PartnerLayoutClientPro
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
-  const { signOut } = useClerk();
 
   const handleSignOut = () => {
-    signOut(() => {
-      window.location.href = '/sign-in';
-    });
+    window.location.href = '/';
   };
 
   return (

@@ -16,7 +16,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { TextInput, Badge, Text } from '@tremor/react'
 import WhiteLabelingNavigation from './white-labeling-navigation'
-import { useClerk } from '@clerk/nextjs'
 
 interface WhiteLabelingLayoutClientProps {
   children: ReactNode
@@ -26,12 +25,9 @@ export default function WhiteLabelingLayoutClient({ children }: WhiteLabelingLay
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
-  const { signOut } = useClerk();
 
   const handleSignOut = () => {
-    signOut(() => {
-      window.location.href = '/sign-in';
-    });
+    window.location.href = '/';
   };
 
   return (

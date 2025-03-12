@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useUser } from '@clerk/nextjs'
+import { useSafeUser } from '@/lib/clerk-utils'
 import {
   Card,
   Title,
@@ -15,6 +15,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { createClient } from '@supabase/supabase-js'
+import { OnboardingForm } from '@/components/onboarding/OnboardingForm'
+import { OnboardingCheck } from '@/components/onboarding/OnboardingCheck'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 // Form schema
 const onboardingSchema = z.object({
@@ -33,7 +36,7 @@ type OnboardingFormValues = z.infer<typeof onboardingSchema>
 
 export default function OnboardingPage() {
   const router = useRouter()
-  const { user, isLoaded, isSignedIn } = useUser()
+  const { user, isSignedIn } = useSafeUser()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [debugInfo, setDebugInfo] = useState<string | null>(null)
@@ -127,7 +130,7 @@ export default function OnboardingPage() {
   };
 
   // If user is not loaded or not signed in, show loading state
-  if (!isLoaded || !isSignedIn) {
+  if (!isSignedIn) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">

@@ -13,3 +13,25 @@ credential.https://dev.azure.com.usehttppath=true
 init.defaultbranch=master
 user.email=your.email@example.com
 user.name=subhransupk
+warning: in the working copy of 'app/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+D	alter-tables.sql
+M	app/admin-redirect.tsx
+M	app/api/admin/create-partner/route.ts
+M	app/api/admin/partners/[id]/route.ts
+M	app/api/admin/partners/route.ts
+M	app/api/check-profile/route.ts
+M	app/api/onboarding/route.ts
+M	app/api/webhook/clerk/route.ts
+M	app/layout.tsx
+M	app/onboarding/page.tsx
+M	components/admin/layout/admin-header.tsx
+M	components/layout/dashboard-layout-client.tsx
+M	components/layout/partner-layout-client.tsx
+M	components/layout/white-labeling-layout-client.tsx
+M	components/onboarding/OnboardingCheck.tsx
+D	fix-database-clean-cascade-fixed.sql
+D	fix-database-clean-cascade.sql
+D	fix-database-clean.sql
+D	fix-database.sql
+D	make-admin.sql
+M	middleware.ts

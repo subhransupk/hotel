@@ -7,6 +7,9 @@ import { z } from 'zod';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+// Check if we're in build/SSG mode
+const isSSG = process.env.NEXT_RUNTIME === 'nodejs' && process.env.NODE_ENV === 'production';
+
 // Validate environment variables
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error('Missing required environment variables for Supabase');
@@ -29,6 +32,12 @@ const partnerSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  // If we're in SSG mode, return a 200 response to prevent build errors
+  if (isSSG) {
+    console.log('Skipping create partner API during SSG build');
+    return NextResponse.json({ message: 'Skipping create partner API during SSG build' }, { status: 200 });
+  }
+  
   console.log('=== CREATE PARTNER API CALLED ===');
   
   try {

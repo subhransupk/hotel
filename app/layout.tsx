@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
-import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -16,38 +15,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Check if Clerk environment variables are available
-  const isClerkConfigured = 
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && 
-    process.env.CLERK_SECRET_KEY;
-
-  // If Clerk is not configured, render without ClerkProvider
-  if (!isClerkConfigured) {
-    console.warn("Clerk is not initialized due to missing environment variables");
-    return (
-      <html lang="en">
-        <body className={inter.className}>
-          {children}
-          <Toaster richColors position="top-right" />
-        </body>
-      </html>
-    );
-  }
-
   return (
-    <ClerkProvider
-      appearance={{
-        elements: {
-          formButtonPrimary: "bg-blue-600 hover:bg-blue-700 text-sm normal-case"
-        }
-      }}
-    >
-      <html lang="en">
-        <body className={inter.className}>
-          {children}
-          <Toaster richColors position="top-right" />
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        {children}
+        <Toaster richColors position="top-right" />
+      </body>
+    </html>
   )
 }

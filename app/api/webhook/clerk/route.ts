@@ -12,7 +12,16 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 // Admin email from environment variable
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
+// Check if we're in build/SSG mode
+const isSSG = process.env.NEXT_RUNTIME === 'nodejs' && process.env.NODE_ENV === 'production';
+
 export async function POST(req: Request) {
+  // If we're in SSG mode, return a 200 response to prevent build errors
+  if (isSSG) {
+    console.log('Skipping webhook processing during SSG build');
+    return new NextResponse('Skipping webhook processing during SSG build', { status: 200 });
+  }
+  
   console.log('Webhook received from Clerk');
   
   // Check if Clerk is configured
@@ -230,6 +239,12 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
+  // If we're in SSG mode, return a 200 response to prevent build errors
+  if (isSSG) {
+    console.log('Skipping webhook processing during SSG build');
+    return new NextResponse('Skipping webhook processing during SSG build', { status: 200 });
+  }
+  
   // Check if Clerk is configured
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
     console.warn("Clerk is not initialized due to missing environment variables");

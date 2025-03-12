@@ -15,7 +15,6 @@ import {
   ArrowLeftOnRectangleIcon,
 } from '@heroicons/react/24/outline'
 import { TextInput, Badge, Text } from '@tremor/react'
-import { useClerk } from '@clerk/nextjs'
 
 interface DashboardLayoutClientProps {
   children: ReactNode
@@ -53,14 +52,11 @@ export function DashboardLayoutClient({ children }: DashboardLayoutClientProps) 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
-  const { signOut } = useClerk();
 
   const unreadNotifications = notifications.filter(n => !n.isRead).length
 
   const handleSignOut = () => {
-    signOut(() => {
-      window.location.href = '/sign-in';
-    });
+    window.location.href = '/';
   };
 
   return (

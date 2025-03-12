@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
+import { useSafeUser } from '@/lib/clerk-utils';
 import { createClient } from '@supabase/supabase-js';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function OnboardingCheck({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { user, isLoaded, isSignedIn } = useSafeUser();
   const [isChecking, setIsChecking] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [debugLog, setDebugLog] = useState<string[]>([]);

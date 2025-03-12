@@ -2,11 +2,11 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useUser } from '@clerk/nextjs'
+import { useSafeUser } from '@/lib/clerk-utils'
 
 export default function AdminRedirect() {
   const router = useRouter()
-  const { user, isLoaded } = useUser()
+  const { user, isLoaded } = useSafeUser()
 
   useEffect(() => {
     if (isLoaded && user) {

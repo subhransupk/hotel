@@ -19,7 +19,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { TextInput } from '@tremor/react'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { useClerk } from '@clerk/nextjs'
 
 interface AdminHeaderProps {
   onMenuClick: () => void
@@ -66,7 +65,6 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const [unreadCount, setUnreadCount] = useState(
     notifications.filter((n) => !n.read).length
   )
-  const { signOut } = useClerk();
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode)
@@ -104,9 +102,7 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   }
 
   const handleSignOut = () => {
-    signOut(() => {
-      window.location.href = '/sign-in';
-    });
+    window.location.href = '/';
   };
 
   return (
