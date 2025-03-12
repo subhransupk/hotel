@@ -16,7 +16,7 @@ interface ClerkUser {
 export default function OnboardingCheck({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isSignedIn, user } = useSafeUser();
+  const { isLoaded, isSignedIn, user } = useSafeUser();
   const [isChecking, setIsChecking] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [debugLog, setDebugLog] = useState<string[]>([]);
@@ -42,7 +42,11 @@ export default function OnboardingCheck({ children }: { children: React.ReactNod
     }
 
     async function checkOnboardingStatus() {
-      // No need to check isLoaded since useSafeUser handles that internally
+      if (!isLoaded) {
+        addDebugLog('Clerk not loaded yet, waiting...');
+        return;
+      }
+
       if (!isSignedIn || !user) {
         addDebugLog('User not signed in, skipping onboarding check');
         setIsChecking(false);
@@ -164,11 +168,11 @@ export default function OnboardingCheck({ children }: { children: React.ReactNod
       }
     }
 
-    // Only run the check if the user is signed in
-    if (isSignedIn && user) {
+    // Only run the check if the user is loaded and signed in
+    if (isLoaded) {
       checkOnboardingStatus();
     }
-  }, [isSignedIn, user, router, pathname, hasCompletedOnboarding]);
+  }, [isLoaded, isSignedIn, user, router, pathname, hasCompletedOnboarding]);
 
   // Render loading state while checking
   if (isChecking) {

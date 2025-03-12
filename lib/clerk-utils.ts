@@ -33,9 +33,17 @@ export function useSafeClerk() {
   return clerk;
 }
 
+// Define the type for the Clerk user hook return value
+interface ClerkUserState {
+  isLoaded: boolean;
+  isSignedIn: boolean | undefined;
+  user: any | undefined | null;
+}
+
 // Safe version of useUser that returns a dummy implementation during SSG
 export function useSafeUser() {
-  const [user, setUser] = useState({
+  const [userState, setUserState] = useState<ClerkUserState>({
+    isLoaded: false,
     isSignedIn: false,
     user: null,
   });
@@ -46,7 +54,11 @@ export function useSafeUser() {
       import('@clerk/nextjs').then(({ useUser }) => {
         try {
           const userHook = useUser();
-          setUser(userHook);
+          setUserState({
+            isLoaded: userHook.isLoaded,
+            isSignedIn: userHook.isSignedIn,
+            user: userHook.user,
+          });
         } catch (error) {
           console.error('Error initializing Clerk user:', error);
         }
@@ -54,5 +66,5 @@ export function useSafeUser() {
     }
   }, []);
 
-  return user;
+  return userState;
 } 
