@@ -1,12 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSafeUser } from '@/lib/clerk-utils'
 import {
   Card,
   Title,
-  Text,
   TextInput,
   Button,
   Divider,
@@ -14,10 +12,6 @@ import {
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { createClient } from '@supabase/supabase-js'
-import { OnboardingForm } from '@/components/onboarding/OnboardingForm'
-import { OnboardingCheck } from '@/components/onboarding/OnboardingCheck'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 // Form schema
 const onboardingSchema = z.object({
@@ -36,7 +30,6 @@ type OnboardingFormValues = z.infer<typeof onboardingSchema>
 
 export default function OnboardingPage() {
   const router = useRouter()
-  const { user, isSignedIn } = useSafeUser()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [debugInfo, setDebugInfo] = useState<string | null>(null)
@@ -45,80 +38,32 @@ export default function OnboardingPage() {
     register,
     handleSubmit,
     formState: { errors },
-    reset
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      hotelName: '',
-      phoneNumber: '',
-      address: '',
-      city: '',
-      state: '',
-      country: '',
-      postalCode: '',
+      firstName: 'John',
+      lastName: 'Doe',
+      hotelName: 'Demo Hotel',
+      phoneNumber: '1234567890',
+      address: '123 Main St',
+      city: 'Demo City',
+      state: 'Demo State',
+      country: 'Demo Country',
+      postalCode: '12345',
     },
   });
 
-  // Update form with user data when loaded
-  useEffect(() => {
-    if (user) {
-      reset({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        hotelName: '',
-        phoneNumber: '',
-        address: '',
-        city: '',
-        state: '',
-        country: '',
-        postalCode: '',
-      });
-      
-      setDebugInfo(`User loaded: ${user.id}, ${user.firstName} ${user.lastName}, ${user.emailAddresses[0]?.emailAddress}`);
-    }
-  }, [user, reset]);
-
   const onSubmit = async (data: OnboardingFormValues) => {
-    if (!user) {
-      setError('User not authenticated. Please sign in again.');
-      return;
-    }
-    
     setIsSubmitting(true);
     setError(null);
-    setDebugInfo(`Submitting form for user: ${user.id}`);
+    setDebugInfo(`Submitting form`);
 
     try {
-      // Submit the onboarding data
-      const response = await fetch('/api/onboarding', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          email: user.emailAddresses[0]?.emailAddress,
-          ...data,
-        }),
-      });
-
-      const responseData = await response.json();
-      
-      if (!response.ok) {
-        setDebugInfo(`Error response: ${JSON.stringify(responseData)}`);
-        throw new Error(responseData.message || 'Failed to complete onboarding');
-      }
-
-      setDebugInfo(`Success response: ${JSON.stringify(responseData)}`);
-      
-      // Show success message before redirecting
-      setDebugInfo('Onboarding completed successfully! Redirecting to dashboard...');
-      
-      // Add a longer delay before redirecting to ensure state is updated in Supabase
+      // Simulate successful submission
       setTimeout(() => {
-        // Use window.location for a full page refresh to ensure state is reset
+        setDebugInfo('Onboarding completed successfully! Redirecting to dashboard...');
+        
+        // Redirect to dashboard
         window.location.href = '/dashboard';
       }, 2000);
     } catch (err) {
@@ -128,18 +73,6 @@ export default function OnboardingPage() {
       setIsSubmitting(false);
     }
   };
-
-  // If user is not loaded or not signed in, show loading state
-  if (!isSignedIn) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold">Loading...</h2>
-          <p className="mt-2 text-gray-600">Please wait while we prepare your onboarding.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -252,7 +185,7 @@ export default function OnboardingPage() {
                 </div>
                 <div>
                   <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
-                    State/Province (Optional)
+                    State/Province
                   </label>
                   <TextInput
                     id="state"
@@ -279,7 +212,7 @@ export default function OnboardingPage() {
                 </div>
                 <div>
                   <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
-                    Postal Code (Optional)
+                    Postal Code
                   </label>
                   <TextInput
                     id="postalCode"
@@ -295,11 +228,11 @@ export default function OnboardingPage() {
             <div className="flex justify-end">
               <Button
                 type="submit"
+                color="blue"
+                size="lg"
                 loading={isSubmitting}
-                disabled={isSubmitting}
-                className="w-full md:w-auto"
               >
-                Complete Setup
+                {isSubmitting ? 'Submitting...' : 'Complete Onboarding'}
               </Button>
             </div>
           </form>
