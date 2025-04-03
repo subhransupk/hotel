@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+  }
+
+  [data-theme='dark'] {
+    --background: 222.2 84% 4.9%;
+    --foreground: 0 0% 100%;
+  }
+}
+
+@layer utilities {
+  /* Tremor base styles */
+  .tremor-base {
+    @apply text-tremor-content dark:text-dark-tremor-content;
+  }
+
+  .tremor-background {
+    @apply bg-tremor-background dark:bg-dark-tremor-background;
+  }
+
+  .tremor-border {
+    @apply border-tremor-border dark:border-dark-tremor-border;
+  }
+
+  .tremor-ring {
+    @apply ring-tremor-ring dark:ring-dark-tremor-ring;
+  }
+
+  .tremor-primary {
+    @apply text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis;
+  }
+
+  .tremor-default {
+    @apply text-tremor-content dark:text-dark-tremor-content;
+  }
+
+  .tremor-content {
+    @apply text-tremor-content dark:text-dark-tremor-content;
+  }
+
+  .tremor-content-emphasis {
+    @apply text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis;
+  }
+
+  .tremor-content-strong {
+    @apply text-tremor-content-strong dark:text-dark-tremor-content-strong;
+  }
+
+  .tremor-content-subtle {
+    @apply text-tremor-content-subtle dark:text-dark-tremor-content-subtle;
+  }
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-infinite {
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee-infinite-reverse {
+  animation: marquee-reverse 40s linear infinite;
+}
